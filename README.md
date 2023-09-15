@@ -5,7 +5,7 @@ Ubuntu In Termux without proot-distro, code based from [wahasa](https://github.c
 Installation is very simple just copy the code below:
 
 ```
-pkg upgrade && pkg update
+pkg update -y
 ```
 
 ```
