@@ -1,18 +1,28 @@
 # ubuntu-termux
+
 Ubuntu In Termux without proot-distro, code based from [wahasa](https://github.com/wahasa/Ubuntu/)
 
 # Installation
-Installation is very simple just copy the code below:
 
+* Update repository lists
 ```
 pkg update -y
 ```
-
+* Ubuntu installation
 ```
 pkg install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/ubuntu.sh ; chmod +x ubuntu.sh ; ./ubuntu.sh
 ```
+To run Ubuntu just type `ubuntu` on termux
 
-After that run ubuntu, and paste this to install xfce desktop.
+# Desktop environment
+To install desktop environment there is a lot of variety, for starter xfce is easy to navigate and lightweight.
+
+`Xfce Desktop Environment`
 ```
-apt install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/de-xfce.sh ; chmod +x de-xfce.sh ; ./de-xfce.sh
+apt install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/desktopenv/xfce.sh ; chmod +x xfce.sh ; ./xfce.sh
+```
+
+`LXQt Desktop Environment`
+```
+apt install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/desktopenv/lxqt.sh ; chmod +x lxqt.sh ; ./lxqt.sh
 ```
