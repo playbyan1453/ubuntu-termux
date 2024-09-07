@@ -2,7 +2,7 @@
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
-ubuntu=24.04.1
+ubuntu=oracular
 folder=ubuntu-fs
 if [ -d "$folder" ]; then
         first=1
@@ -24,8 +24,7 @@ if [ "$first" != 1 ];then
                 *)
                         echo "unknown architecture"; exit 1 ;;
                 esac
-                wget --progress=bar:force "https://cdimage.ubuntu.com/ubuntu-base/releases/${ubuntu}/release/ubuntu-base-${ubuntu}-base-${archurl}.tar.gz" -O $tarball
-                # wget --progress=bar:force "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
+                wget --progress=bar:force "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
         fi
         cur=`pwd`
         mkdir -p "$folder"
@@ -95,7 +94,7 @@ chmod +x $PREFIX/bin/$linux
 clear
 
 echo ""
-echo "Updating Ubuntu..."
+echo "Setting up Ubuntu..."
 echo ""
 
 echo "#!/bin/bash
