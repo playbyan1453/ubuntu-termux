@@ -2,7 +2,7 @@
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
-ubuntu=mantic
+ubuntu=24.04.1
 folder=ubuntu-fs
 if [ -d "$folder" ]; then
         first=1
@@ -24,7 +24,8 @@ if [ "$first" != 1 ];then
                 *)
                         echo "unknown architecture"; exit 1 ;;
                 esac
-                wget "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
+                wget --progress=bar:force "https://cdimage.ubuntu.com/ubuntu-base/releases/${ubuntu}/release/ubuntu-base-${ubuntu}-base-${archurl}.tar.gz" -O $tarball
+                # wget --progress=bar:force "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
         fi
         cur=`pwd`
         mkdir -p "$folder"
@@ -32,10 +33,10 @@ if [ "$first" != 1 ];then
         echo "Decompressing Rootfs, please be patient."
         proot --link2symlink tar -xf ${cur}/${tarball}||:
         cd "$cur"
-   fi
-   echo "ubuntu" > ~/"$folder"/etc/hostname
-   echo "127.0.0.1 localhost" > ~/"$folder"/etc/hosts
-   echo "nameserver 8.8.8.8" > ~/"$folder"/etc/resolv.conf
+    fi
+    echo "ubuntu" > ~/"$folder"/etc/hostname
+    echo "127.0.0.1 localhost" > ~/"$folder"/etc/hosts
+    echo "nameserver 8.8.8.8" > ~/"$folder"/etc/resolv.conf
 mkdir -p $folder/binds
 bin=.ubuntu
 linux=ubuntu
@@ -59,7 +60,7 @@ command+=" -b /dev"
 command+=" -b /proc"
 command+=" -b $folder/root:/dev/shm"
 ## uncomment the following line to have access to the home directory of termux
-#command+=" -b /data/data/com.termux/files/home:/root"
+# command+=" -b /data/data/com.termux/files/home:/root"
 ## uncomment the following line to mount /sdcard directly to /
 command+=" -b /sdcard"
 command+=" -w /root"
@@ -76,12 +77,14 @@ else
     \$command -c "\$com"
 fi
 EOM
-   #Fixing shebang of $linux"
-   termux-fix-shebang $bin
-   #Making $linux executable"
-   chmod +x $bin
-   #Removing image for some space"
-   rm $tarball
+
+# Fixing shebang of $linux"
+termux-fix-shebang $bin
+# Making $linux executable"
+chmod +x $bin
+# Removing image for some space"
+rm $tarball
+
 #Sound Fix
 echo '#!/bin/bash
 pulseaudio --start \
@@ -89,19 +92,22 @@ pulseaudio --start \
     --exit-idle-time=-1
 bash .ubuntu' > $PREFIX/bin/$linux
 chmod +x $PREFIX/bin/$linux
-   clear
-   echo ""
-   echo "Updating Ubuntu..."
-   echo ""
+clear
+
+echo ""
+echo "Updating Ubuntu..."
+echo ""
+
 echo "#!/bin/bash
 touch ~/.hushlogin
 apt update && apt upgrade -y
 apt install apt-utils dialog nano -y
 rm -rf ~/.bash_profile
 exit" > $folder/root/.bash_profile
+
 bash $linux
-   clear
-   echo ""
-   echo "You can now start Ubuntu with 'ubuntu' script next time"
-   echo ""
+    clear
+    echo ""
+    echo "You can now start Ubuntu with 'ubuntu' script next time"
+    echo ""
 rm ubuntu.sh
