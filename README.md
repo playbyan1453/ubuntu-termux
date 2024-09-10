@@ -1,6 +1,6 @@
 # ubuntu-termux
 
-Ubuntu In Termux without proot-distro, code based from [wahasa](https://github.com/wahasa/Ubuntu/)
+Ubuntu In Termux without proot-distro, code based from [WaHaSa](https://github.com/wahasa/Ubuntu/). Current version is unsing Ubuntu Oracular, you can change the version by editing the ubuntu to other version that available in [oci](https://partner-images.canonical.com/oci/) website.
 
 # Installation
 
@@ -14,6 +14,11 @@ pkg install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu
 ```
 To run Ubuntu just type `ubuntu` on termux
 
+* Ubuntu uninstallation
+```
+rm -rf ubuntu-fs .ubuntu $PREFIX/bin/ubuntu
+```
+
 # Desktop environment
 To install desktop environment there is a lot of variety, for starter xfce is easy to navigate and lightweight.
 
@@ -25,4 +30,12 @@ apt install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu
 `LXQt Desktop Environment`
 ```
 apt install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/desktopenv/lxqt.sh ; chmod +x lxqt.sh ; ./lxqt.sh
+```
+
+# Installing browser
+Currently in ubuntu repo there browser but it may using snap which has some issues currently.
+
+`Firefox`
+```
+wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/firefox.sh ; chmod +x firefox.sh ; ./firefox.sh
 ```
