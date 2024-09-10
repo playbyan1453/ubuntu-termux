@@ -6,7 +6,7 @@ ubuntu=oracular
 folder=ubuntu-fs
 if [ -d "$folder" ]; then
         first=1
-        echo "skipping downloading"
+        echo "Skipping downloading"
 fi
 tarball="ubuntu-rootfs.tar.gz"
 if [ "$first" != 1 ];then
@@ -22,14 +22,14 @@ if [ "$first" != 1 ];then
                 x86_64)
                         archurl="amd64" ;;
                 *)
-                        echo "unknown architecture"; exit 1 ;;
+                        echo "Unknown architecture!"; exit 1 ;;
                 esac
-                wget --progress=bar:force "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
+                wget "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
         fi
         cur=`pwd`
         mkdir -p "$folder"
         cd "$folder"
-        echo "Decompressing Rootfs, please be patient."
+        echo "Decompressing Rootfs, please be patient..."
         proot --link2symlink tar -xf ${cur}/${tarball}||:
         cd "$cur"
     fi
@@ -39,11 +39,14 @@ if [ "$first" != 1 ];then
 mkdir -p $folder/binds
 bin=.ubuntu
 linux=ubuntu
-echo "writing launch script"
+echo "Writing launch script"
 cat > $bin <<- EOM
 #!/bin/bash
+pulseaudio --start \
+    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
+    --exit-idle-time=-1
 cd \$(dirname \$0)
-## unset LD_PRELOAD in case termux-exec is installed
+## Unset LD_PRELOAD in case termux-exec is installed
 unset LD_PRELOAD
 command="proot"
 command+=" --kill-on-exit"
@@ -56,11 +59,13 @@ if [ -n "\$(ls -A $folder/binds)" ]; then
     done
 fi
 command+=" -b /dev"
+command+=" -b /dev/null:/proc/sys/kernel/cap_last_cap"
 command+=" -b /proc"
+command+=" -b /data/data/com.termux/files/usr/tmp:/tmp"
 command+=" -b $folder/root:/dev/shm"
-## uncomment the following line to have access to the home directory of termux
-# command+=" -b /data/data/com.termux/files/home:/root"
-## uncomment the following line to mount /sdcard directly to /
+## Uncomment the following line to have access to the home directory of termux
+#command+=" -b /data/data/com.termux/files/home:/root"
+## Uncomment the following line to mount /sdcard directly to /
 command+=" -b /sdcard"
 command+=" -w /root"
 command+=" /usr/bin/env -i"
@@ -84,26 +89,21 @@ chmod +x $bin
 # Removing image for some space"
 rm $tarball
 
-#Sound Fix
+echo "export PULSE_SERVER=127.0.0.1" >> $folder/etc/skel/.bashrc
 echo '#!/bin/bash
-pulseaudio --start \
-    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
-    --exit-idle-time=-1
 bash .ubuntu' > $PREFIX/bin/$linux
 chmod +x $PREFIX/bin/$linux
-clear
-
-echo ""
-echo "Setting up Ubuntu..."
-echo ""
-
+   clear
+   echo ""
+   echo "Setting up Ubuntu..."
+   echo ""
 echo "#!/bin/bash
 touch ~/.hushlogin
 apt update && apt upgrade -y
 apt install apt-utils dialog nano -y
+cp /etc/skel/.bashrc .
 rm -rf ~/.bash_profile
 exit" > $folder/root/.bash_profile
-
 bash $linux
     clear
     echo ""
