@@ -18,7 +18,7 @@ pkill -f firefox
 vnc-stop
 sleep 2
 
-wget -O $(find ~/.mozilla/firefox -name *.default-esr)/user.js https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/user.js
+wget -O $(find ~/.mozilla/firefox -name *.default-esr)/user.js https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/patch/user.js
 
 rm -rf /etc/apt/sources.list
 mv sources.list /etc/apt/
