@@ -1,6 +1,6 @@
 #!/bin/bash
 echo ""
-echo "Installing Firefox..."
+echo "Installing Firefox ESR..."
 echo ""
 
 cp /etc/apt/sources.list ~/
