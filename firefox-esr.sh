@@ -22,4 +22,4 @@ wget -O $(find ~/.mozilla/firefox -name *.default-esr)/user.js https://raw.githu
 
 rm -rf /etc/apt/sources.list
 mv sources.list /etc/apt/
-rm firefox.sh
+rm firefox-esr.sh
