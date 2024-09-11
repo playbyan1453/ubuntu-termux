@@ -37,5 +37,5 @@ Currently in ubuntu repo there browser but it may using snap which has some issu
 
 `Firefox`
 ```
-wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/firefox.sh ; chmod +x firefox.sh ; ./firefox.sh
+wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/firefox-esr.sh ; chmod +x firefox-esr.sh ; ./firefox-esr.sh
 ```
