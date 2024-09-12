@@ -42,9 +42,7 @@ linux=ubuntu
 echo "Writing launch script"
 cat > $bin <<- EOM
 #!/bin/bash
-pulseaudio --start \
-    --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" \
-    --exit-idle-time=-1
+pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1
 cd \$(dirname \$0)
 ## Unset LD_PRELOAD in case termux-exec is installed
 unset LD_PRELOAD
@@ -64,7 +62,7 @@ command+=" -b /proc"
 command+=" -b /data/data/com.termux/files/usr/tmp:/tmp"
 command+=" -b $folder/root:/dev/shm"
 ## Uncomment the following line to have access to the home directory of termux
-#command+=" -b /data/data/com.termux/files/home:/root"
+# command+=" -b /data/data/com.termux/files/home:/root"
 ## Uncomment the following line to mount /sdcard directly to /
 command+=" -b /sdcard"
 command+=" -w /root"
