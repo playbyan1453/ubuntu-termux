@@ -6,7 +6,7 @@ Ubuntu In Termux without proot-distro, code based from [WaHaSa](https://github.c
 
 * Update repository lists
 ```
-pkg update -y
+pkg update ; pkg upgrade -y
 ```
 * Ubuntu installation
 ```
