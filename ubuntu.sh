@@ -7,9 +7,9 @@ termux-setup-storage
 echo "You may need to look up ubuntu versions over :"
 echo "https://partner-images.canonical.com/oci/"
 read -n 1 -s -r -p "Press any key to continue"
+echo ""
 
-read ubuntu -p "Ubuntu codename: "
-
+read -p "Ubuntu codename: " ubuntu
 folder=ubuntu-fs
 if [ -d "$folder" ]; then
         first=1
