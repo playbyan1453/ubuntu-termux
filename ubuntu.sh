@@ -1,8 +1,15 @@
 #!/data/data/com.termux/files/usr/bin/bash
+
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
-ubuntu=oracular
+
+echo "You may need to look up ubuntu versions over :"
+echo "https://partner-images.canonical.com/oci/"
+read -n 1 -s -r -p "Press any key to continue"
+
+read ubuntu -p "Ubuntu codename: "
+
 folder=ubuntu-fs
 if [ -d "$folder" ]; then
         first=1
