@@ -1,6 +1,6 @@
 # ubuntu-termux
 
-Ubuntu In Termux without proot-distro, code based from [WaHaSa](https://github.com/wahasa/Ubuntu/). Current version is unsing Ubuntu Oracular, you can change the version by editing the ubuntu to other version that available in [oci](https://partner-images.canonical.com/oci/) website.
+The script automates proot installation process and provides more flexibility, the code based from [WaHaSa](https://github.com/wahasa/Ubuntu/). You may check the version first to the version that available in [oci](https://partner-images.canonical.com/oci/) website.
 
 # Installation
 
@@ -20,7 +20,7 @@ rm -rf ubuntu-fs .ubuntu $PREFIX/bin/ubuntu
 ```
 
 # Desktop environment
-To install desktop environment there is a lot of variety, for starter xfce is easy to navigate and lightweight.
+To install desktop environment you need to run this inside proot, for starter xfce is easy to navigate and lightweight.
 
 `Xfce Desktop Environment`
 ```
@@ -44,3 +44,6 @@ wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/apps/fire
 ```
 wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/apps/chromium.sh ; chmod +x chromium.sh ; ./chromium.sh
 ```
+
+# Hardware Acceleration
+This section is still under investigation.
