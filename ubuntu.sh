@@ -66,10 +66,10 @@ fi
 command+=" -b /dev"
 command+=" -b /dev/null:/proc/sys/kernel/cap_last_cap"
 command+=" -b /proc"
-command+=" -b $TMPDIR:/tmp"
+command+=" -b \$TMPDIR:/tmp"
 command+=" -b $folder/root:/dev/shm"
 ## Uncomment the following line to have access to the home directory of termux
-# command+=" -b $HOME:/root"
+# command+=" -b \$HOME:/root"
 ## Uncomment the following line to mount /sdcard directly to /
 command+=" -b /sdcard"
 command+=" -w /root"
