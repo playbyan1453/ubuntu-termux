@@ -1,54 +1,61 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-echo "Installing required packages..."
+# Define color palette
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # Reset color
+
+echo -e "${CYAN}Installing required packages...${NC}"
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
 clear
 
-echo "Fetching available codenames..."
+echo -e "${CYAN}Fetching available codenames...${NC}"
 available_codenames=$(curl -s https://partner-images.canonical.com/oci/ | grep -oP '(?<=href=")[^/]+/(?=")' | grep -v 'Parent' | sort | sed 's/\/$//')
 clear
 
-echo "Available versions from https://partner-images.canonical.com/oci/:"
-echo "$available_codenames" | sed 's/^/- /'
+echo -e "${GREEN}Available versions from ${CYAN}https://partner-images.canonical.com/oci/:${NC}"
+echo -e "$available_codenames" | sed "s/^/${YELLOW}- ${NC}/"
 
 read -n 1 -s -r -p "Press any key to continue..."$'\n'
 
 while true; do
-    read -p "Ubuntu codename: " ubuntu
+    read -p "$(echo -e "${GREEN}Ubuntu codename: ${NC}")" ubuntu
     # Check if the entered codename is in the list
     if echo "$available_codenames" | grep -Fx "$ubuntu" > /dev/null; then
         while true; do
-            read -p "$(echo -e "Are you sure you want to install '$ubuntu'? (y/n): ")" confirm
+            read -p "$(echo -e "${YELLOW}Are you sure you want to install '$ubuntu'? (y/n): ${NC}")" confirm
             case "$confirm" in
                 [Yy]*)
-                    echo -e "Proceeding with installation of Ubuntu '$ubuntu'..."
+                    echo -e "${GREEN}Proceeding with installation of '$ubuntu'...${NC}"
                     break 2
                     ;;
                 [Nn]*|"")
-                    echo -e "Please select a different codename."
+                    echo -e "${CYAN}Please select a different codename.${NC}"
                     break
                     ;;
                 *)
-                    echo -e "Invalid input. Please enter 'y' or 'n'."
+                    echo -e "${RED}Invalid input${NC}. Please enter 'y' or 'n'."
                     ;;
             esac
         done
     else
-        echo "'$ubuntu' not found in available codenames. Please try again."
+        echo -e "${RED}'$ubuntu' not found in available codenames${NC}. Please try again."
     fi
 done
 
 folder="ubuntu-fs"
 if [ -d "$folder" ]; then
     first=1
-    echo "Skipping downloading"
+    echo -e "${YELLOW}Skipping downloading!${NC}"
 fi
 tarball="ubuntu-rootfs.tar.gz"
 if [ "$first" != 1 ]; then
     if [ ! -f "$tarball" ]; then
-        echo "Downloading Rootfs, this may take a while based on your internet speed."
+        echo -e "${CYAN}Downloading Rootfs${NC}, this may take a while based on your internet speed."
         case "$(dpkg --print-architecture)" in
             aarch64)
                 archurl="arm64" ;;
@@ -59,25 +66,25 @@ if [ "$first" != 1 ]; then
             x86_64)
                 archurl="amd64" ;;
             *)
-                echo "Unknown architecture!"
+                echo -e "${RED}Unknown architecture!${NC}"
                 exit 1 ;;
         esac
         # Ensure $ubuntu is set
         if [ -z "$ubuntu" ]; then
-            echo "Ubuntu codename not specified."
+            echo -e "${RED}Ubuntu codename not specified.${NC}"
             exit 1
         fi
         curl -o "$tarball" "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" || {
-            echo "Download failed, exiting..."
+            echo -e "${RED}Download failed, exiting...${NC}"
             exit 1
         }
     fi
     cur=$(pwd)
     mkdir -p "$folder"
     cd "$folder" || exit 1
-    echo "Decompressing Rootfs, please be patient..."
+    echo -e "${CYAN}Decompressing Rootfs, please be patient...${NC}"
     proot --link2symlink tar -xf "${cur}/${tarball}" || {
-        echo "Failed to decompress $tarball."
+        echo -e "${RED}Failed to decompress${NC} $tarball."
         exit 1
     }
     cd "$cur" || exit 1
@@ -90,7 +97,7 @@ echo "nameserver 8.8.8.8" > "$cur/$folder/etc/resolv.conf"
 mkdir -p $folder/binds
 bin=.ubuntu
 linux=ubuntu
-echo "Writing launch script"
+echo -e "${CYAN}Writing launch script${NC}"
 cat > $bin <<- EOM
 #!/bin/bash
 pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1
@@ -143,9 +150,7 @@ echo '#!/bin/bash
 bash .ubuntu' > $PREFIX/bin/$linux
 chmod +x $PREFIX/bin/$linux
 clear
-    echo ""
-    echo "Setting up Ubuntu..."
-    echo ""
+    echo -e "${CYAN}Setting up Ubuntu...${NC}"
 echo "#!/bin/bash
 touch ~/.hushlogin
 apt update && apt upgrade -y
@@ -155,7 +160,5 @@ rm -rf ~/.bash_profile
 exit" > $folder/root/.bash_profile
 bash $linux
     clear
-    echo ""
-    echo "You can now start Ubuntu with 'ubuntu' script next time"
-    echo ""
+    echo -e "${NC}You can now start Ubuntu with 'ubuntu' script next time"
 rm ubuntu.sh
