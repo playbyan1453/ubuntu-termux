@@ -18,7 +18,7 @@ available_codenames=$(curl -s https://partner-images.canonical.com/oci/ | grep -
 clear
 
 echo -e "${GREEN}Available versions from ${CYAN}https://partner-images.canonical.com/oci/:${NC}"
-printf "- ${YELLOW}%s${NC}\n" $available_codenames
+printf "${YELLOW}- ${NC}%s\n" $available_codenames
 
 read -n 1 -s -r -p "Press any key to continue..."$'\n'
 
