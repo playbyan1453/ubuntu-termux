@@ -1,18 +1,18 @@
 # ubuntu-termux
 
-The script automates proot installation process and provides more flexibility, the code based from [WaHaSa](https://github.com/wahasa/Ubuntu/). You may check the version first to the version that available in [oci](https://partner-images.canonical.com/oci/) website.
+The script automates proot installation process and provides more flexibility, the code based from [WaHaSa](https://github.com/wahasa/Ubuntu/). Follow the instruction that the script provides.
 
 # Installation
 
 * Update repository lists
 ```
-pkg update -y
+pkg update
 ```
 * Ubuntu installation
 ```
-pkg install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/ubuntu.sh ; chmod +x ubuntu.sh ; ./ubuntu.sh
+curl -o ubuntu.sh https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/ubuntu.sh ; chmod +x ubuntu.sh ; ./ubuntu.sh
 ```
-To run Ubuntu just type `ubuntu` on termux
+After following and sucessfully installed ubuntu, you can run ubuntu by typing `ubuntu` on termux.
 
 * Ubuntu uninstallation
 ```
