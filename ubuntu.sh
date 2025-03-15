@@ -1,7 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 # Define color palette
-ORANGE='\033[38;5;208m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
