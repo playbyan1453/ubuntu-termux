@@ -1,8 +1,10 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+echo "Installing required packages..."
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
+clear
 
 echo "Fetching available codenames..."
 available_codenames=$(curl -s https://partner-images.canonical.com/oci/ | grep -oP '(?<=href=")[^/]+/(?=")' | grep -v 'Parent' | sort | sed 's/\/$//')
@@ -11,21 +13,21 @@ clear
 echo "Available versions from https://partner-images.canonical.com/oci/:"
 echo "$available_codenames" | sed 's/^/- /'
 
-read -n 1 -s -r -p "Press any key to continue"
+read -n 1 -s -r -p "Press any key to continue..."$'\n'
 
 while true; do
     read -p "Ubuntu codename: " ubuntu
     # Check if the entered codename is in the list
     if echo "$available_codenames" | grep -Fx "$ubuntu" > /dev/null; then
         while true; do
-            read -p "$(echo -e "Are you sure you want to install '$ubuntu'? [y/N]: ")" confirm
+            read -p "$(echo -e "Are you sure you want to install '$ubuntu'? (y/n): ")" confirm
             case "$confirm" in
                 [Yy]*)
-                    echo -e "Confirmed. Proceeding with installation of '$ubuntu'..."
+                    echo -e "Proceeding with installation of Ubuntu '$ubuntu'..."
                     break 2
                     ;;
                 [Nn]*|"")
-                    echo -e "Installation cancelled. Please select a different codename."
+                    echo -e "Please select a different codename."
                     break
                     ;;
                 *)
