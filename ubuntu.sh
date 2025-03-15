@@ -4,45 +4,87 @@ pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
 
-echo "You may need to look up ubuntu versions over :"
-echo "https://partner-images.canonical.com/oci/"
-read -n 1 -s -r -p "Press any key to continue"
-echo ""
+echo "Fetching available codenames..."
+available_codenames=$(curl -s https://partner-images.canonical.com/oci/ | grep -oP '(?<=href=")[^/]+/(?=")' | grep -v 'Parent' | sort | sed 's/\/$//')
+clear
 
-read -p "Ubuntu codename: " ubuntu
-folder=ubuntu-fs
+echo "Available versions from https://partner-images.canonical.com/oci/:"
+echo "$available_codenames" | sed 's/^/- /'
+
+read -n 1 -s -r -p "Press any key to continue"
+
+while true; do
+    read -p "Ubuntu codename: " ubuntu
+    # Check if the entered codename is in the list
+    if echo "$available_codenames" | grep -Fx "$ubuntu" > /dev/null; then
+        while true; do
+            read -p "$(echo -e "Are you sure you want to install '$ubuntu'? [y/N]: ")" confirm
+            case "$confirm" in
+                [Yy]*)
+                    echo -e "Confirmed. Proceeding with installation of '$ubuntu'..."
+                    break 2
+                    ;;
+                [Nn]*|"")
+                    echo -e "Installation cancelled. Please select a different codename."
+                    break
+                    ;;
+                *)
+                    echo -e "Invalid input. Please enter 'y' or 'n'."
+                    ;;
+            esac
+        done
+    else
+        echo "'$ubuntu' not found in available codenames. Please try again."
+    fi
+done
+
+folder="ubuntu-fs"
 if [ -d "$folder" ]; then
-        first=1
-        echo "Skipping downloading"
+    first=1
+    echo "Skipping downloading"
 fi
 tarball="ubuntu-rootfs.tar.gz"
-if [ "$first" != 1 ];then
-        if [ ! -f $tarball ]; then
-                echo "Download Rootfs, this may take a while base on your internet speed."
-                case `dpkg --print-architecture` in
-                aarch64)
-                        archurl="arm64" ;;
-                arm*)
-                        archurl="armhf" ;;
-                ppc64el)
-                        archurl="ppc64el" ;;
-                x86_64)
-                        archurl="amd64" ;;
-                *)
-                        echo "Unknown architecture!"; exit 1 ;;
-                esac
-                wget "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" -O $tarball
+if [ "$first" != 1 ]; then
+    if [ ! -f "$tarball" ]; then
+        echo "Downloading Rootfs, this may take a while based on your internet speed."
+        case "$(dpkg --print-architecture)" in
+            aarch64)
+                archurl="arm64" ;;
+            arm*)
+                archurl="armhf" ;;
+            ppc64el)
+                archurl="ppc64el" ;;
+            x86_64)
+                archurl="amd64" ;;
+            *)
+                echo "Unknown architecture!"
+                exit 1 ;;
+        esac
+        # Ensure $ubuntu is set
+        if [ -z "$ubuntu" ]; then
+            echo "Ubuntu codename not specified."
+            exit 1
         fi
-        cur=`pwd`
-        mkdir -p "$folder"
-        cd "$folder"
-        echo "Decompressing Rootfs, please be patient..."
-        proot --link2symlink tar -xf ${cur}/${tarball}||:
-        cd "$cur"
+        curl -o "$tarball" "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" || {
+            echo "Download failed, exiting..."
+            exit 1
+        }
     fi
-    echo "ubuntu" > ~/"$folder"/etc/hostname
-    echo "127.0.0.1 localhost" > ~/"$folder"/etc/hosts
-    echo "nameserver 8.8.8.8" > ~/"$folder"/etc/resolv.conf
+    cur=$(pwd)
+    mkdir -p "$folder"
+    cd "$folder" || exit 1
+    echo "Decompressing Rootfs, please be patient..."
+    proot --link2symlink tar -xf "${cur}/${tarball}" || {
+        echo "Failed to decompress $tarball."
+        exit 1
+    }
+    cd "$cur" || exit 1
+fi
+
+echo "ubuntu" > "$cur/$folder/etc/hostname"
+echo "127.0.0.1 localhost" > "$cur/$folder/etc/hosts"
+echo "nameserver 8.8.8.8" > "$cur/$folder/etc/resolv.conf"
+
 mkdir -p $folder/binds
 bin=.ubuntu
 linux=ubuntu
@@ -98,10 +140,10 @@ echo "export PULSE_SERVER=127.0.0.1" >> $folder/etc/skel/.bashrc
 echo '#!/bin/bash
 bash .ubuntu' > $PREFIX/bin/$linux
 chmod +x $PREFIX/bin/$linux
-   clear
-   echo ""
-   echo "Setting up Ubuntu..."
-   echo ""
+clear
+    echo ""
+    echo "Setting up Ubuntu..."
+    echo ""
 echo "#!/bin/bash
 touch ~/.hushlogin
 apt update && apt upgrade -y
