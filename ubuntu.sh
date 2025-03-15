@@ -8,18 +8,18 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # Reset color
 
-echo "${CYAN}Installing required packages...${NC}"
+echo -e "${CYAN}Installing required packages...${NC}"
 pkg install root-repo x11-repo
 pkg install proot pulseaudio -y
 termux-setup-storage
 clear
 
-echo "${CYAN}Fetching available codenames...${NC}"
+echo -e "${CYAN}Fetching available codenames...${NC}"
 available_codenames=$(curl -s https://partner-images.canonical.com/oci/ | grep -oP '(?<=href=")[^/]+/(?=")' | grep -v 'Parent' | sort | sed 's/\/$//')
 clear
 
-echo "${GREEN}Available versions from ${CYAN}https://partner-images.canonical.com/oci/:${NC}"
-echo "$available_codenames" | sed "s/^/${YELLOW}- ${NC}/"
+echo -e "${GREEN}Available versions from ${CYAN}https://partner-images.canonical.com/oci/:${NC}"
+echo -e "$available_codenames" | sed "s/^/${YELLOW}- ${NC}/"
 
 read -n 1 -s -r -p "Press any key to continue..."$'\n'
 
@@ -44,19 +44,19 @@ while true; do
             esac
         done
     else
-        echo "${RED}'$ubuntu' not found in available codenames${NC}. Please try again."
+        echo -e "${RED}'$ubuntu' not found in available codenames${NC}. Please try again."
     fi
 done
 
 folder="ubuntu-fs"
 if [ -d "$folder" ]; then
     first=1
-    echo "${YELLOW}Skipping downloading!${NC}"
+    echo -e "${YELLOW}Skipping downloading!${NC}"
 fi
 tarball="ubuntu-rootfs.tar.gz"
 if [ "$first" != 1 ]; then
     if [ ! -f "$tarball" ]; then
-        echo "${CYAN}Downloading Rootfs${NC}, this may take a while based on your internet speed."
+        echo -e "${CYAN}Downloading Rootfs${NC}, this may take a while based on your internet speed."
         case "$(dpkg --print-architecture)" in
             aarch64)
                 archurl="arm64" ;;
@@ -67,25 +67,25 @@ if [ "$first" != 1 ]; then
             x86_64)
                 archurl="amd64" ;;
             *)
-                echo "${RED}Unknown architecture!${NC}"
+                echo -e "${RED}Unknown architecture!${NC}"
                 exit 1 ;;
         esac
         # Ensure $ubuntu is set
         if [ -z "$ubuntu" ]; then
-            echo "${RED}Ubuntu codename not specified.${NC}"
+            echo -e "${RED}Ubuntu codename not specified.${NC}"
             exit 1
         fi
         curl -o "$tarball" "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" || {
-            echo "${RED}Download failed, exiting...${NC}"
+            echo -e "${RED}Download failed, exiting...${NC}"
             exit 1
         }
     fi
     cur=$(pwd)
     mkdir -p "$folder"
     cd "$folder" || exit 1
-    echo "${CYAN}Decompressing Rootfs, please be patient...${NC}"
+    echo -e "${CYAN}Decompressing Rootfs, please be patient...${NC}"
     proot --link2symlink tar -xf "${cur}/${tarball}" || {
-        echo "${RED}Failed to decompress${NC} $tarball."
+        echo -e "${RED}Failed to decompress${NC} $tarball."
         exit 1
     }
     cd "$cur" || exit 1
@@ -98,7 +98,7 @@ echo "nameserver 8.8.8.8" > "$cur/$folder/etc/resolv.conf"
 mkdir -p $folder/binds
 bin=.ubuntu
 linux=ubuntu
-echo "${CYAN}Writing launch script${NC}"
+echo -e "${CYAN}Writing launch script${NC}"
 cat > $bin <<- EOM
 #!/bin/bash
 pulseaudio --start --load="module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1" --exit-idle-time=-1
@@ -151,9 +151,7 @@ echo '#!/bin/bash
 bash .ubuntu' > $PREFIX/bin/$linux
 chmod +x $PREFIX/bin/$linux
 clear
-    echo ""
-    echo "${CYAN}Setting up Ubuntu...${NC}"
-    echo ""
+    echo -e "${CYAN}Setting up Ubuntu...${NC}"
 echo "#!/bin/bash
 touch ~/.hushlogin
 apt update && apt upgrade -y
@@ -163,7 +161,5 @@ rm -rf ~/.bash_profile
 exit" > $folder/root/.bash_profile
 bash $linux
     clear
-    echo ""
-    echo "${NC}You can now start Ubuntu with 'ubuntu' script next time"
-    echo ""
+    echo -e "${NC}You can now start Ubuntu with 'ubuntu' script next time"
 rm ubuntu.sh
