@@ -10,7 +10,7 @@ pkg update
 ```
 * Ubuntu installation
 ```
-curl -o ubuntu.sh https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/ubuntu.sh ; chmod +x ubuntu.sh ; ./ubuntu.sh
+pkg install wget -y ; wget https://raw.githubusercontent.com/playbyan1453/ubuntu-termux/main/ubuntu.sh ; chmod +x ubuntu.sh ; ./ubuntu.sh
 ```
 After following and sucessfully installed ubuntu, you can run ubuntu by typing `ubuntu` on termux.
 
