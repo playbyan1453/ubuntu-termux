@@ -74,7 +74,7 @@ if [ "$first" != 1 ]; then
             echo -e "${RED}Ubuntu codename not specified.${NC}"
             exit 1
         fi
-        curl -o "$tarball" "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" || {
+        wget -O "$tarball" "https://partner-images.canonical.com/oci/${ubuntu}/current/ubuntu-${ubuntu}-oci-${archurl}-root.tar.gz" || {
             echo -e "${RED}Download failed, exiting...${NC}"
             exit 1
         }
